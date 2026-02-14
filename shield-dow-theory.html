@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FX shield ダウ理論・完全マスター講義</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Urbanist:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #020617;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #f8fafc;
+        }
+
+        .slide-container {
+            background-color: #0f172a;
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+            margin-bottom: 50px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            border: 1px solid #1e293b;
+            overflow: hidden;
+        }
+
+        .slide-num {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-family: 'Urbanist', sans-serif;
+            color: #38bdf8;
+            font-weight: 700;
+            opacity: 0.5;
+        }
+
+        .brand-tag {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-family: 'Urbanist', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #38bdf8;
+            letter-spacing: 2px;
+        }
+
+        h1 { font-size: clamp(32px, 6vw, 64px); color: #38bdf8; margin: 0; line-height: 1.2; }
+        h2 { font-size: clamp(22px, 4vw, 32px); border-left: 6px solid #38bdf8; padding-left: 15px; margin-bottom: 20px; }
+        p { font-size: 16px; line-height: 1.6; color: #94a3b8; margin: 5px 0; }
+        
+        .content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+
+        .diagram-area {
+            background: #020617;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #1e293b;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #38bdf8;
+            color: #0f172a;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .highlight-card {
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        svg { width: 100%; height: auto; display: block; }
+        .line-main { stroke: #38bdf8; stroke-width: 4; fill: none; }
+        .line-red { stroke: #f43f5e; stroke-width: 4; fill: none; }
+        
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .slide-container { padding: 30px 20px; min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: 表紙 -->
+<div class="slide-container">
+    <div class="brand-tag">FX SHIELD</div>
+    <div class="content" style="text-align:center;">
+        <i class="fa-solid fa-shield-halved" style="font-size: 60px; color: #38bdf8; margin-bottom: 20px;"></i>
+        <h1>超図解<br>実践ダウ理論</h1>
+        <p style="font-size:20px; color:#64748b; margin-top:10px;">「なんとなく」のトレードを卒業する</p>
+    </div>
+    <div class="slide-num">01 / 14</div>
+</div>
+
+<!-- Slide 2: 3つのトレンド -->
+<div class="slide-container">
+    <h2>1. 相場の状態は「3つ」だけ</h2>
+    <div class="content">
+        <div class="grid-2">
+            <div class="diagram-area">
+                <span class="badge" style="background:#38bdf8;">上昇：買いが圧勝</span>
+                <svg viewBox="0 0 200 120">
+                    <path d="M20,100 L60,40 L100,70 L140,20 L180,40" class="line-main" />
+                </svg>
+            </div>
+            <div class="diagram-area">
+                <span class="badge" style="background:#f43f5e;">下降：売りが圧勝</span>
+                <svg viewBox="0 0 200 120">
+                    <path d="M20,20 L60,80 L100,50 L140,110 L180,90" class="line-red" />
+                </svg>
+            </div>
+        </div>
+        
+        <div class="diagram-area" style="margin-top:20px; min-height:150px;">
+            <span class="badge" style="background:#64748b;">レンジ：どっちつかずの迷い（互角）</span>
+            <svg viewBox="0 0 400 80">
+                <rect x="50" y="10" width="300" height="60" fill="rgba(255,255,255,0.05)" stroke="#64748b" stroke-dasharray="4" />
+                <path d="M60,40 L90,20 L120,60 L150,20 L180,60 L210,20 L240,60 L270,20 L300,60 L330,40" stroke="#f8fafc" stroke-width="2" fill="none" />
+            </svg>
+        </div>
+        <p style="text-align:center; font-size:14px; margin-top:10px;">※レンジは買い手と売り手が同じ力で引っ張り合う「綱引き」状態です。</p>
+    </div>
+    <div class="slide-num">02 / 14</div>
+</div>
+
+<!-- Slide 3: 上昇トレンドの構造 -->
+<div class="slide-container">
+    <h2>2. 上昇トレンドの「形」</h2>
+    <div class="content">
+        <div class="diagram-area" style="margin-bottom:20px;">
+            <svg viewBox="0 0 400 150">
+                <path d="M50,130 L120,60 L180,100 L250,30 L320,70 L380,10" class="line-main" />
+                <circle cx="120" cy="60" r="6" fill="#38bdf8" />
+                <circle cx="250" cy="30" r="6" fill="#38bdf8" />
+                <text x="110" y="45" fill="#38bdf8" font-size="12">高値更新</text>
+                <text x="170" y="125" fill="#94a3b8" font-size="12">安値切り上げ</text>
+            </svg>
+        </div>
+        <p>「高値」と「安値」がセットで上がっていく状態。この間は「買い」のみに集中します。</p>
+    </div>
+    <div class="slide-num">03 / 14</div>
+</div>
+
+<!-- Slide 4: 下降トレンドの構造 -->
+<div class="slide-container">
+    <h2>3. 下降トレンドの「形」</h2>
+    <div class="content">
+        <div class="diagram-area" style="margin-bottom:20px;">
+            <svg viewBox="0 0 400 150">
+                <path d="M50,20 L120,90 L180,50 L250,120 L320,80 L380,140" class="line-red" />
+                <circle cx="120" cy="90" r="6" fill="#f43f5e" />
+                <circle cx="250" cy="120" r="6" fill="#f43f5e" />
+                <text x="110" y="115" fill="#f43f5e" font-size="12">安値更新</text>
+                <text x="170" y="35" fill="#94a3b8" font-size="12">高値切り下げ</text>
+            </svg>
+        </div>
+        <p>「安値」と「高値」がセットで下がっていく状態。無理に買ってはいけない局面です。</p>
+    </div>
+    <div class="slide-num">04 / 14</div>
+</div>
+
+<!-- Slide 5: 押し安値 -->
+<div class="slide-container">
+    <h2>4. 守るべき「押し安値」</h2>
+    <div class="content">
+        <div class="grid-2">
+            <div>
+                <p>最高値を作った「直前の安値」を<strong>押し安値</strong>と呼びます。</p>
+                <div class="highlight-card" style="border-left: 5px solid #38bdf8;">
+                    <p>ここを割り込まない限り、上昇トレンドは継続中です。</p>
+                </div>
+            </div>
+            <div class="diagram-area">
+                <svg viewBox="0 0 200 150">
+                    <path d="M20,130 L70,40 L120,90 L180,20" class="line-main" />
+                    <line x1="120" y1="90" x2="200" y2="90" stroke="#f43f5e" stroke-dasharray="4" />
+                    <circle cx="120" cy="90" r="5" fill="#f43f5e" />
+                    <text x="110" y="110" fill="#f43f5e" font-size="10">最後の砦(押し安値)</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">05 / 14</div>
+</div>
+
+<!-- Slide 6: 戻り高値 -->
+<div class="slide-container">
+    <h2>5. 突破すべき「戻り高値」</h2>
+    <div class="content">
+        <div class="grid-2">
+            <div class="diagram-area">
+                <svg viewBox="0 0 200 150">
+                    <path d="M20,20 L70,110 L120,60 L180,130" class="line-red" />
+                    <line x1="120" y1="60" x2="200" y2="60" stroke="#38bdf8" stroke-dasharray="4" />
+                    <circle cx="120" cy="60" r="5" fill="#38bdf8" />
+                    <text x="110" y="50" fill="#38bdf8" font-size="10">ここを超えるまで下目線</text>
+                </svg>
+            </div>
+            <div>
+                <p>最安値を作った「直前の高値」を<strong>戻り高値</strong>です。</p>
+                <p>ここを上に抜けるまでは、売りのチャンスを伺います。</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">06 / 14</div>
+</div>
+
+<!-- Slide 7: 転換の予兆 -->
+<div class="slide-container">
+    <h2>6. トレンド転換の「予兆」</h2>
+    <div class="content">
+        <p>トレンドが終わる時、チャートは「勢いの衰え」を知らせてくれます。</p>
+        <div class="diagram-area">
+            <svg viewBox="0 0 400 150">
+                <path d="M50,130 L120,60 L180,100 L250,40 L300,80 L350,85" class="line-main" />
+                <circle cx="350" cy="85" r="12" fill="none" stroke="#f43f5e" stroke-width="2" />
+                <text x="240" y="120" fill="#f43f5e" font-weight="bold">高値が届かなくなった！</text>
+            </svg>
+        </div>
+        <p style="text-align:center;"><strong>高値の更新が止まったら、深追い厳禁！</strong></p>
+    </div>
+    <div class="slide-num">07 / 14</div>
+</div>
+
+<!-- Slide 8: 上位足 -->
+<div class="slide-container">
+    <h2>7. 上位足(日足)は「巨大な流れ」</h2>
+    <div class="content">
+        <div class="grid-2">
+            <div>
+                <p>日足のトレンドは、相場の「本流」です。</p>
+                <p><strong>FX shield</strong>では、まずこの巨大な波がどちらに勢いよく流れているかを見極めます。</p>
+            </div>
+            <div class="diagram-area">
+                <svg viewBox="0 0 200 150">
+                    <path d="M20,130 L60,80 L100,100 L160,30" stroke="#38bdf8" stroke-width="8" fill="none" stroke-linecap="round" />
+                    <path d="M150,45 L175,20 L140,25" fill="#38bdf8" />
+                    <text x="30" y="145" fill="#38bdf8" font-weight="bold" font-size="14">日足の圧倒的トレンド</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">08 / 14</div>
+</div>
+
+<!-- Slide 9: 下位足 -->
+<div class="slide-container">
+    <h2>8. 下位足(4H)は「攻略の入口」</h2>
+    <div class="content">
+        <div class="grid-2">
+            <div class="diagram-area">
+                <svg viewBox="0 0 200 150">
+                    <path d="M10,140 L190,20" stroke="#1e293b" stroke-width="4" stroke-dasharray="4" />
+                    <circle cx="100" cy="75" r="50" fill="rgba(74, 222, 128, 0.1)" stroke="#4ade80" stroke-width="2" />
+                    <path d="M70,100 L90,60 L110,80 L130,40" stroke="#4ade80" stroke-width="3" fill="none" />
+                    <text x="65" y="140" fill="#4ade80" font-size="12" font-weight="bold">4時間足でチャンスを待つ</text>
+                </svg>
+            </div>
+            <div>
+                <p>日足という大きな流れの中にある「小さなチャンス」を拡大して見つけるのが4時間足の役割です。</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">09 / 14</div>
+</div>
+
+<!-- Slide 10: 【鉄板】波の色分け解説（アップデート） -->
+<div class="slide-container">
+    <h2>9. 【鉄板】波の色分けで捉える</h2>
+    <div class="content">
+        <p>日足の転換を、4時間足が追い越していく瞬間を可視化します。</p>
+        <div class="diagram-area">
+            <svg viewBox="0 0 400 220">
+                <!-- 日足の波（グレーの点線） -->
+                <path d="M20,180 L100,40 L180,140 L280,20 L380,80" stroke="#64748b" stroke-width="3" stroke-dasharray="8" fill="none" />
+                <text x="230" y="35" fill="#64748b" font-weight="bold" font-size="12">日足：高値切り下げ</text>
+
+                <!-- 4時間足の波（緑の実線） -->
+                <path d="M280,20 L300,70 L320,50 L340,110 L365,85 L390,150" stroke="#4ade80" stroke-width="5" fill="none" />
+                <circle cx="340" cy="110" r="10" fill="#4ade80" />
+                <text x="210" y="140" fill="#4ade80" font-weight="bold" font-size="14">4H：高値切り下げ or</text>
+                <text x="210" y="160" fill="#4ade80" font-weight="bold" font-size="14">4H：トレンド発生でエントリー！</text>
+                
+                <rect x="20" y="20" width="10" height="10" fill="#64748b" opacity="0.5" />
+                <text x="40" y="30" fill="#94a3b8" font-size="10">日足の波</text>
+                <rect x="20" y="40" width="10" height="10" fill="#4ade80" />
+                <text x="40" y="50" fill="#94a3b8" font-size="10">4Hの波</text>
+            </svg>
+        </div>
+        <p style="text-align:center; color:#4ade80; font-weight:bold;">日足の勢いが弱まったところで、4時間足の「明確なサイン」を待つ。</p>
+    </div>
+    <div class="slide-num">10 / 14</div>
+</div>
+
+<!-- Slide 11: 損切り位置 -->
+<div class="slide-container">
+    <h2>10. 損切りは「理論の破綻」場所</h2>
+    <div class="content">
+        <div class="grid-2">
+            <div class="diagram-area">
+                <svg viewBox="0 0 200 150">
+                    <path d="M20,20 L80,120 L130,70 L180,150" class="line-red" />
+                    <line x1="100" y1="70" x2="160" y2="70" stroke="#94a3b8" />
+                    <text x="110" y="60" fill="#94a3b8" font-size="10">直近高値(ストップ)</text>
+                </svg>
+            </div>
+            <div>
+                <p>そこを越えられたら「シナリオが外れた」ことが確定するポイントに置きます。</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">11 / 14</div>
+</div>
+
+<!-- Slide 12: エントリーの必須条件 -->
+<div class="slide-container">
+    <h2>11. 常に自問自答すべきこと</h2>
+    <div class="content">
+        <p>最後に、今どの波を追いかけているのか？が重要になります。</p>
+        <div class="highlight-card">
+            <ul style="margin:0; padding-left:20px; color:#f1f5f9; list-style-type: none;">
+                <li><i class="fa-solid fa-check" style="color:#38bdf8; margin-right:10px;"></i><strong>マルチタイムフレーム分析：</strong>全体像は把握できているか？</li>
+                <li><i class="fa-solid fa-check" style="color:#38bdf8; margin-right:10px;"></i><strong>水平線：</strong>進行方向に邪魔な「壁」はいないか？</li>
+                <li><i class="fa-solid fa-check" style="color:#38bdf8; margin-right:10px;"></i><strong>移動平均線：</strong>傾きと勢いは味方しているか？</li>
+            </ul>
+        </div>
+        <p style="text-align:center; margin-top:15px; font-weight:bold; color:#7dd3fc;">勝てるトレードには、これら全ての根拠が必要です。</p>
+    </div>
+    <div class="slide-num">12 / 14</div>
+</div>
+
+<!-- Slide 13: 4種の神器予告（アップデート：目立たせる） -->
+<div class="slide-container" style="border: 2px solid #38bdf8;">
+    <div class="brand-tag">NEXT STEP</div>
+    <h2 style="border-left-color: #fbbf24; color: #fbbf24;">12. 勝利への「4種の神器」</h2>
+    <div class="content">
+        <p style="color: #f8fafc; font-size: 18px; text-align: center; margin-bottom: 30px;">
+            今回解説した「ダウ理論」は、最強の盾の第一歩に過ぎません。
+        </p>
+        
+        <div style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.8)); padding: 30px; border-radius: 15px; border: 1px solid #38bdf8; box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);">
+            <h3 style="text-align: center; color: #38bdf8; font-size: 24px; margin-bottom: 20px;">
+                <i class="fa-solid fa-crown" style="color: #fbbf24; margin-right: 10px;"></i> 
+                全4項目・徹底マスター講義 
+                <i class="fa-solid fa-crown" style="color: #fbbf24; margin-left: 10px;"></i>
+            </h3>
+            <div class="grid-2" style="grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                <div style="background: #0f172a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155;">① 水平線</div>
+                <div style="background: rgba(56, 189, 248, 0.3); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #38bdf8; font-weight: bold; color: #fff;">② ダウ理論</div>
+                <div style="background: #0f172a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155;">③ 移動平均線</div>
+                <div style="background: #0f172a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155;">④ MTF分析</div>
+            </div>
+            <p style="margin-top: 25px; text-align: center; color: #fbbf24; font-weight: bold; font-size: 20px;">
+                これら「全て」を詳しく解説した資料を<br>順次公開し、徹底解説していきます！
+            </p>
+        </div>
+        
+        <p style="margin-top:20px; text-align:center; font-weight:bold; color:#38bdf8;">「4種の神器」を揃え、常勝トレーダーの仲間入りを果たしましょう。</p>
+    </div>
+    <div class="slide-num">13 / 14</div>
+</div>
+
+<!-- Slide 14: 最後に -->
+<div class="slide-container">
+    <div class="content" style="text-align:center;">
+        <div class="badge">MISSION START</div>
+        <h1>準備は整った。</h1>
+        <p style="margin-top:20px; font-size:18px;">原理原則「ダウ理論」を武器に、<br>まずは過去チャートで波を描く練習をしましょう。</p>
+        <div style="margin-top:40px;">
+            <i class="fa-solid fa-shield-halved" style="font-size: 80px; color: #38bdf8; opacity:0.8;"></i>
+        </div>
+    </div>
+    <div class="slide-num">14 / 14</div>
+</div>
+
+</body>
+</html>
