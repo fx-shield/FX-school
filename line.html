@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FX shield 技術講習 14ページ目レイアウト修正版</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #020617;
+            --accent-gold: #f59e0b;
+            --accent-blue: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; }
+        body, html {
+           margin: 0; padding: 0;
+            height: 100%; width: 100%;
+            background-color: #000;
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .presentation-wrapper {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 15px;
+        }
+
+        .slide-container {
+            width: 95vw;
+            max-width: 1100px;
+            aspect-ratio: 16 / 9;
+            background-color: var(--bg-dark);
+            border: 2px solid #1e293b;
+            border-radius: 20px;
+            position: relative;
+            display: none;
+            padding: 3% 5%;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,1);
+        }
+
+        .slide-container.active { display: flex; flex-direction: column; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .slide-header { border-left: 10px solid var(--accent-gold); padding-left: 20px; margin-bottom: 20px; flex-shrink: 0; }
+        .slide-header h2 { font-size: clamp(20px, 3.2vw, 38px); margin: 0; font-weight: 900; color: #fff; }
+
+        .slide-body { flex: 1; display: flex; gap: 30px; min-height: 0; align-items: center; }
+
+        .text-section { flex: 1; font-size: clamp(15px, 1.8vw, 22px); line-height: 1.7; color: var(--text-sub); }
+        .text-section b { color: var(--accent-gold); font-weight: 900; }
+
+        .visual-section {
+            flex: 1.4; background: #070b14; border-radius: 15px; border: 1px solid #1e293b;
+            height: 100%; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+
+        .wave-path { fill: none; stroke: white; stroke-width: 5; stroke-linejoin: round; stroke-dasharray: 1500; stroke-dashoffset: 1500; animation: drawWave 3.5s forwards ease-in-out; }
+        @keyframes drawWave { to { stroke-dashoffset: 0; } }
+
+        .wave-path-static { fill: none; stroke: white; stroke-width: 5; stroke-linejoin: round; }
+
+        .controls { margin-top: 15px; display: flex; align-items: center; gap: 30px; z-index: 100; }
+        .nav-btn {
+            background: var(--accent-gold); color: #000; border: none; padding: 12px 40px; border-radius: 50px;
+            font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 1.2rem;
+        }
+        .nav-btn:hover { background: #fff; transform: scale(1.05); }
+        .nav-btn:disabled { background: #1e293b; color: #475569; transform: none; }
+        .page-num { color: #fff; font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; }
+
+        .retest-point { fill: none; stroke: var(--success); stroke-width: 4; animation: ping 1.5s infinite; }
+        @keyframes ping { 0% { r: 5; opacity: 1; } 100% { r: 35; opacity: 0; } }
+
+        .last-slide-content { text-align: center; width: 100%; overflow-y: auto; max-height: 100%; padding: 10px 0; }
+        .last-slide-content h1 { font-size: clamp(30px, 6vw, 80px); color: var(--accent-gold); margin-bottom: 10px; font-weight: 900; }
+        .last-slide-content p { font-size: clamp(14px, 2vw, 22px); color: #fff; line-height: 1.5; margin: 5px 0; font-weight: 700; }
+
+        .chart-container { width: 100%; max-width: 600px; margin: 15px auto; text-align: left; }
+        .chart-row { margin-bottom: 8px; display: flex; align-items: center; gap: 15px; }
+        .chart-label { width: 60px; color: #fff; font-weight: 900; font-size: 14px; }
+        .chart-bar-bg { flex: 1; height: 14px; background: rgba(255,255,255,0.1); border-radius: 7px; overflow: hidden; position: relative; }
+        .chart-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-gold)); width: 0; transition: width 1.5s cubic-bezier(0.1, 0.5, 0.2, 1); }
+        .chart-percent { width: 45px; color: var(--accent-gold); font-weight: 900; font-size: 14px; text-align: right; }
+
+        @media (max-width: 900px) {
+            .slide-container { aspect-ratio: auto; height: 85vh; width: 95vw; }
+            .slide-body { flex-direction: column; }
+            .visual-section { height: 250px; width: 100%; flex: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation-wrapper">
+
+    <!-- 01: 表紙 -->
+    <div class="slide-container active" style="justify-content:center; align-items:center;">
+        <div class="last-slide-content">
+            <i class="fa-solid fa-shield-halved" style="font-size: 100px; color: var(--accent-gold); margin-bottom: 20px;"></i>
+            <h1>FX shield</h1>
+            <p>環境認識・技術講習</p>
+            <p style="color: var(--accent-blue); letter-spacing: 5px;">～ 水平線＆トレンドライン ～</p>
+        </div>
+    </div>
+
+    <!-- 02: 4種の神器 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>4種の神器：トレードの絶対武器</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>FX shieldが定義する<b>「最強の4武器」</b>。</p>
+                <div style="margin-top:15px; line-height:1.4;">
+                    1. <b>水平線＆トレンドライン</b> (本日の主役)<br>
+                    <span style="opacity:0.3;">
+                    2. ダウ理論<br>
+                    3. 移動平均線<br>
+                    4. MTF分析
+                    </span>
+                </div>
+            </div>
+            <div class="visual-section">
+                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:15px; width:90%; padding: 10px;">
+                    <div style="background:var(--accent-gold); color:#000; padding:15px; text-align:center; font-weight:900; border-radius:12px; font-size:clamp(0.85rem, 1.4vw, 1.2rem); display:flex; align-items:center; justify-content:center;">水平線＆トレンドライン</div>
+                    <div style="border:2px solid #1e293b; color:#1e293b; padding:15px; text-align:center; border-radius:12px; font-size:clamp(1rem, 1.5vw, 1.4rem); display:flex; align-items:center; justify-content:center;">ダウ理論</div>
+                    <div style="border:2px solid #1e293b; color:#1e293b; padding:15px; text-align:center; border-radius:12px; font-size:clamp(1rem, 1.5vw, 1.4rem); display:flex; align-items:center; justify-content:center;">MA</div>
+                    <div style="border:2px solid #1e293b; color:#1e293b; padding:15px; text-align:center; border-radius:12px; font-size:clamp(1rem, 1.5vw, 1.4rem); display:flex; align-items:center; justify-content:center;">MTF分析</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 03: 意識の集中（ジグザグ） -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>意識の集中：ジグザグのリズム</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>相場は特定の価格帯を意識して<b>ジグザグ</b>に動きます。</p>
+                <p>何度も止められる場所には、膨大な「注文」が溜まっています。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <text x="160" y="110" fill="var(--accent-gold)" font-weight="900" font-size="14">売り圧力 ↓</text>
+                    <line x1="0" y1="125" x2="400" y2="125" stroke="var(--accent-gold)" stroke-width="4" stroke-dasharray="10" />
+                    <path d="M 0 190 L 80 125 L 140 180 L 220 125 L 280 160 L 360 125 L 400 150" class="wave-path" />
+                    <circle cx="80" cy="125" r="8" fill="var(--accent-gold)" />
+                    <circle cx="220" cy="125" r="8" fill="var(--accent-gold)" />
+                    <circle cx="360" cy="125" r="8" fill="var(--accent-gold)" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 04: 天井の抜けと再反発 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>天井：抜けてから「支え」を確認</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>天井を<b>一度抜け</b>ます。その後、再び水平線まで戻り、今度は<b>床として再反発</b>することを確認します。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <line x1="0" y1="130" x2="400" y2="130" stroke="var(--danger)" stroke-width="4" />
+                    <path d="M 0 210 L 120 130 L 180 30 L 260 130 L 380 50" class="wave-path" stroke-width="6" />
+                    <circle cx="260" cy="130" r="15" class="retest-point" />
+                    <text x="240" y="165" fill="var(--success)" font-weight="900" font-size="14">ここで再反発を確認</text>
+                    <text x="10" y="120" fill="var(--danger)" font-weight="900" font-size="12">サポートライン</text>
+                    <text x="10" y="150" fill="var(--success)" font-weight="900" font-size="10">線の下から買い圧力</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 05: 床の抜けと再反発 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>床：抜けてから「重し」を確認</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>床を<b>一度抜け</b>、再び水平線へ戻って今度は<b>天井として再反発</b>する「戻り売り」の形です。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <line x1="0" y1="120" x2="400" y2="120" stroke="var(--accent-blue)" stroke-width="4" />
+                    <path d="M 0 40 L 120 120 L 180 220 L 260 120 L 380 200" class="wave-path" stroke-width="6" />
+                    <circle cx="260" cy="120" r="15" class="retest-point" stroke="var(--danger)" />
+                    <text x="240" y="95" fill="var(--danger)" font-weight="900" font-size="14">ここで再反発を確認</text>
+                    <text x="10" y="110" fill="var(--accent-blue)" font-weight="900" font-size="12">レジスタンスライン</text>
+                    <text x="10" y="90" fill="var(--danger)" font-weight="900" font-size="10">線の上から売り圧力</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 06: 役割交代 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>サポートラインがレジスタンスラインに変わる</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>価格が水平線を<b>またいで反発</b>することで、役割が交代したことが証明されます。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <line x1="0" y1="125" x2="400" y2="125" stroke="var(--accent-gold)" stroke-width="3" stroke-dasharray="5" />
+                    <path d="M 0 200 L 100 125 L 140 180 L 240 125 L 300 30 L 360 125 L 400 80" class="wave-path" stroke-width="5" />
+                    <circle cx="360" cy="125" r="15" class="retest-point" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 07: 確定を待つ規律 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>規律：下位足が反転するのを待つ</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>水平線にタッチした瞬間に入ってはいけません。タッチした後、<b>しっかり反発の波</b>が出たのを見てから入るのが<b>勝ちトレーダー</b>です。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <line x1="0" y1="150" x2="400" y2="150" stroke="var(--accent-gold)" stroke-width="4" />
+                    <path d="M 0 230 L 150 150 L 200 80 L 280 150 L 330 110" class="wave-path" />
+                    <i class="fa-solid fa-hourglass-start" style="position:absolute; right:10%; top:20%; font-size:80px; color:var(--accent-gold); opacity:0.2;"></i>
+                    <text x="250" y="185" fill="var(--success)" font-weight="900">下位足の反転を待つ</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 08: ダマシの回避 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>再確認を待てば罠は防げる</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>一度抜けても、そのまま戻ってきてしまうのが「ダマシ」です。水平線での<b>再反発を待つ</b>だけで、この罠を回避できます。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <line x1="0" y1="100" x2="400" y2="100" stroke="var(--accent-gold)" stroke-width="2" />
+                    <path d="M 50 150 L 150 100 L 180 80 L 250 150" stroke="var(--danger)" stroke-width="3" stroke-dasharray="5" fill="none" />
+                    <text x="170" y="180" fill="var(--danger)" font-weight="900">再反発せずに戻る＝ダマシ</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 09: 斜めの足場 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>斜めの足場：ラインでの再稼働</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>斜めのラインも同じです。<b>抜けて、戻って、ラインでぴったり再反発</b>。この接地がトレンドの信頼性です。</p>
+                <p style="font-size: 0.85em; background: rgba(14,165,233,0.1); padding: 10px; border-radius: 8px; margin-top: 10px;">これは、下位足（5分＆15分）で見えるより、より<b>上位足（1時間より4時間より日足）の方がより機能する</b>特性があります。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <line x1="50" y1="200" x2="350" y2="50" stroke="var(--accent-blue)" stroke-width="6" stroke-linecap="round" />
+                    <path d="M 40 230 L 100 130 L 140 155 L 210 80 L 250 100 L 315 68 L 370 120" class="wave-path-static" stroke-width="5" />
+                    <circle cx="140" cy="155" r="15" fill="none" stroke="#ff4d4d" stroke-width="3" />
+                    <circle cx="250" cy="100" r="15" fill="none" stroke="#ff4d4d" stroke-width="3" />
+                    <circle cx="315" cy="68" r="15" fill="none" stroke="#ff4d4d" stroke-width="3" />
+                    <g fill="#ff4d4d" font-size="12" font-weight="bold">
+                        <path d="M 140 210 L 140 175" stroke="#ff4d4d" stroke-width="2" marker-end="url(#arrowhead)" />
+                        <text x="110" y="225">サポートライン</text>
+                        <path d="M 315 25 L 315 50" stroke="#ff4d4d" stroke-width="2" marker-end="url(#arrowhead)" />
+                        <text x="270" y="15">レジスタンスライン</text>
+                    </g>
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10: 最強の合流点 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>最強の合流点：反発の共鳴</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>水平線の再反発とトレンドラインの再反発が<b>交差点で重なった</b>時。そこは盾が重なる「鉄壁の城門」です。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <line x1="0" y1="125" x2="400" y2="125" stroke="var(--accent-gold)" stroke-width="3" stroke-dasharray="5" />
+                    <line x1="50" y1="200" x2="350" y2="50" stroke="var(--accent-blue)" stroke-width="4" />
+                    <path d="M 60 210 L 100 175 L 150 120 L 200 125 L 260 70 L 300 75 L 360 20" class="wave-path-static" stroke-width="6" />
+                    <circle cx="200" cy="125" r="25" fill="none" stroke="#ff4d4d" stroke-width="4" />
+                    <circle cx="200" cy="125" r="8" fill="#ff4d4d" />
+                    <text x="215" y="115" fill="#ff4d4d" font-weight="900" font-size="18">最強の合流！</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11: 大きな波の力 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>大きな波の力：MTFチャート</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>小さな反発より、<b>上位足の巨大な再反発</b>を信じましょう。</p>
+                <p>日足の抵抗帯がある場合、<b>上位足が反転するのを待つ</b>ことが高勝率への鍵です。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="90%">
+                    <path d="M 0 180 Q 100 20, 200 200 Q 300 380, 400 180" fill="none" stroke="rgba(14,165,233,0.2)" stroke-width="40" stroke-linecap="round" />
+                    <path id="higherTimeframe" d="M 0 180 Q 100 20, 200 200 Q 300 380, 400 180" fill="none" stroke="var(--accent-blue)" stroke-width="8" stroke-dasharray="10 5" />
+                    <path d="M 50 120 L 70 80 L 90 100 L 110 50 L 130 90 L 150 130 L 170 170 L 190 200 L 210 160 L 230 180 L 250 230 L 270 280 L 290 320" class="wave-path-static" stroke="var(--accent-blue)" stroke-width="4" />
+                    <text x="160" y="240" fill="var(--accent-blue)" font-weight="900" font-size="12">上位足のサポートで反転を待つ</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12: 相場の呼吸 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>相場はジグザグに息をする</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <p>一直線の相場は不自然です。<b>「抜けて、戻って、再反発する」</b>。この呼吸を待つことが相場との対話です。</p>
+            </div>
+            <div class="visual-section">
+                <svg viewBox="0 0 400 250" width="95%">
+                    <path d="M 0 220 L 70 140 L 130 190 L 210 100 L 270 150 L 360 40" class="wave-path" stroke-width="6" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13: 規律の再確認 -->
+    <div class="slide-container">
+        <div class="slide-header"><h2>FX shield：勝者の規律</h2></div>
+        <div class="slide-body">
+            <div class="text-section">
+                <ul style="list-style:none; padding:0; margin:0;">
+                    <li style="margin-bottom:15px;"><i class="fa-solid fa-check-square" style="color:var(--success); margin-right:10px;"></i>1. 水平線を抜ける</li>
+                    <li style="margin-bottom:15px;"><i class="fa-solid fa-check-square" style="color:var(--success); margin-right:10px;"></i>2. 水平線まで戻るのを待つ</li>
+                    <li style="margin-bottom:15px;"><i class="fa-solid fa-check-square" style="color:var(--success); margin-right:10px;"></i>3. <b>下位足が反転するのを待つ</b></li>
+                </ul>
+            </div>
+            <div class="visual-section" style="flex-direction:column;">
+                <svg viewBox="0 0 200 120" width="80%" style="margin-bottom:10px;">
+                    <line x1="0" y1="80" x2="200" y2="80" stroke="var(--accent-gold)" stroke-width="3" />
+                    <path d="M 20 110 L 60 80 L 100 20 L 140 80 L 180 30" fill="none" stroke="var(--success)" stroke-width="5" stroke-linejoin="round" />
+                    <circle cx="140" cy="80" r="10" fill="var(--success)" /> 
+                </svg>
+                <div style="font-size:1.5rem; font-weight:900; color:var(--success); text-align:center;">下位足が反転するのを待つ</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14: 損切りと資金管理の本質 (レイアウト修正済み) -->
+    <div class="slide-container" id="riskSlide" style="padding-bottom: 2%;">
+        <div class="slide-header" style="margin-bottom: 10px;"><h2>資金を守る手段：損切りは悪ではない</h2></div>
+        <div class="slide-body" style="align-items: center; justify-content: space-between;">
+            <div class="text-section" style="font-size: clamp(13px, 1.4vw, 18px); line-height: 1.5; padding-right: 20px;">
+                <p style="margin-bottom: 10px;"><b>「どこまで伸びるか？」</b>ではなく、<br><b>「どこが損切りにかかりにくいか？」「どこで支えられているか？」</b>を考えることが、資金を守る重要な手段です。</p>
+                <p style="margin-bottom: 10px;">損切りは決して悪ではありません。正しいトレードをしても損切りにかかることはあります。</p>
+                <p>大切なのは、<b>逆行しにくいポイント</b>でトレードすること。それが勝ち続けるための絶対条件です。</p>
+            </div>
+            <div class="visual-section" style="background: rgba(239, 68, 68, 0.05); height: 90%; flex: 1.1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+                <i class="fa-solid fa-shield-virus" style="font-size:clamp(40px, 6vw, 70px); color:var(--danger); opacity: 0.6; margin-bottom: 15px;"></i>
+                <div style="text-align: center;">
+                    <div style="color:var(--danger); font-weight:900; font-size:clamp(1.2rem, 2vw, 2rem); margin-bottom: 8px;">資金を守る</div>
+                    <div style="color:var(--text-sub); font-size: clamp(0.7rem, 1vw, 1rem); line-height: 1.2;">逆行しにくい場所＝<br>強固な支えがある場所</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 15: 結び -->
+    <div class="slide-container" style="justify-content:center; align-items:center;">
+        <div class="last-slide-content">
+            <h1 style="color:var(--accent-gold); margin-bottom:5px;">FX shield</h1>
+            <p style="font-size: 16px;">どの足の水平線・トレンドラインが引けるのか？が重要です。</p>
+            
+            <!-- 有効性パーセントグラフ -->
+            <div class="chart-container">
+                <p style="font-size: 13px; color: var(--accent-blue); text-align:center; margin-bottom: 10px;">ラインの機能・信頼性（%）</p>
+                <div class="chart-row">
+                    <div class="chart-label">日足</div>
+                    <div class="chart-bar-bg"><div class="chart-bar-fill" data-width="95%"></div></div>
+                    <div class="chart-percent">95%</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">4時間</div>
+                    <div class="chart-bar-bg"><div class="chart-bar-fill" data-width="85%"></div></div>
+                    <div class="chart-percent">85%</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">1時間</div>
+                    <div class="chart-bar-bg"><div class="chart-bar-fill" data-width="70%"></div></div>
+                    <div class="chart-percent">70%</div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">15分</div>
+                    <div class="chart-bar-bg"><div class="chart-bar-fill" data-width="50%"></div></div>
+                    <div class="chart-percent">50%</div>
+                </div>
+            </div>
+
+            <p style="font-size:18px; color:#fff; font-weight:900;">次は <b>4種の神器</b> について解説していきます。</p>
+            <p style="color:var(--accent-blue); font-weight:900; font-size:24px; margin-top: 10px;">複合的に分析し相場に挑みましょう。</p>
+        </div>
+    </div>
+
+    <!-- 操作パネル -->
+    <div class="controls">
+        <button id="prevBtn" class="nav-btn" disabled>前へ</button>
+        <div class="page-num"><span id="currentPage">1</span> / 15</div>
+        <button id="nextBtn" class="nav-btn">次へ</button>
+    </div>
+
+</div>
+
+<script>
+    const slides = document.querySelectorAll('.slide-container');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const pageDisplay = document.getElementById('currentPage');
+    let currentIdx = 0;
+
+    function update() {
+        slides.forEach((s, i) => {
+            s.style.display = (i === currentIdx) ? 'flex' : 'none';
+            if(i === currentIdx) s.classList.add('active');
+            else s.classList.remove('active');
+        });
+
+        pageDisplay.textContent = currentIdx + 1;
+        prevBtn.disabled = currentIdx === 0;
+        nextBtn.textContent = (currentIdx === slides.length - 1) ? "TOPへ" : "次へ";
+
+        const activeSlide = slides[currentIdx];
+        
+        // 波のアニメーションリセット
+        const waves = activeSlide.querySelectorAll('.wave-path');
+        waves.forEach(w => {
+            w.style.animation = 'none';
+            w.offsetHeight; 
+            w.style.animation = 'drawWave 3s forwards ease-in-out';
+        });
+
+        // グラフのアニメーションリセット
+        const bars = activeSlide.querySelectorAll('.chart-bar-fill');
+        bars.forEach(bar => {
+            bar.style.width = '0';
+            setTimeout(() => {
+                bar.style.width = bar.getAttribute('data-width');
+            }, 100);
+        });
+    }
+
+    nextBtn.onclick = () => { currentIdx = (currentIdx + 1) % slides.length; update(); };
+    prevBtn.onclick = () => { if (currentIdx > 0) { currentIdx--; update(); } };
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') nextBtn.click();
+        if (e.key === 'ArrowLeft') prevBtn.click();
+    });
+    update();
+</script>
+
+</body>
+</html>
