@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FX Shield - 移動平均線 完全攻略ガイド</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #05020a;
+            --bg-slide: #0f0720;
+            --accent: #DEFF9A; 
+            --text-main: #f5f5f5;
+            --ma20: #ff4d4d;   
+            --ma75: #4dabff;   
+            --ma200: #ffd700;  
+            --white: #ffffff;
+            --danger: #ff4d4d;
+            --buy: #DEFF9A;
+            --sell: #ff6b6b;
+        }
+
+        * { box-sizing: border-box; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Urbanist', 'Noto Sans JP', sans-serif;
+            overflow: hidden; 
+        }
+
+        .slider-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            position: relative;
+            background: radial-gradient(circle at center, #0f0720 0%, #05020a 100%);
+        }
+
+        .slide-content {
+            width: 98%;
+            max-width: 1200px; 
+            height: 96%; 
+            background: rgba(15, 7, 32, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(222, 255, 154, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header-box { display: flex; align-items: center; gap: 12px; margin-bottom: 5px; }
+        .shield-icon { font-size: 32px; color: var(--accent); }
+        h1 { font-size: 60px; color: var(--accent); margin: 0; }
+        h2 { font-size: 28px; color: var(--white); margin: 0; }
+        h2 span { border-bottom: 2px solid var(--accent); }
+        p { font-size: 18px; line-height: 1.2; color: #cbd5e1; margin: 4px 0; }
+        strong { color: var(--accent); }
+
+        .chart-area {
+            flex-grow: 1;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            width: 100%;
+            margin-top: 5px;
+        }
+        svg { width: 100%; height: 100%; }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(222, 255, 154, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
+        .page-indicator {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            color: var(--accent);
+            background: rgba(0,0,0,0.6);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-btn prev" onclick="moveSlide(-1)"><i class="fa-solid fa-chevron-left"></i></div>
+<div class="nav-btn next" onclick="moveSlide(1)"><i class="fa-solid fa-chevron-right"></i></div>
+
+<div class="slider-container" id="slider">
+
+    <!-- 01: 表紙 -->
+    <div class="slide">
+        <div class="slide-content" style="text-align:center; justify-content: center;">
+            <h1>FX SHIELD</h1>
+            <p style="font-size: 32px; color: #fff; font-weight: bold;">移動平均線 完全攻略 16講義</p>
+            <p>講師が教える「勝てるMA」の鉄則</p>
+        </div>
+    </div>
+
+    <!-- 02: MAとは -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-chart-line"></i></div><h2><span>講義 02：MAは「平均の波」</span></h2></div>
+            <p>一定期間の平均値を結んだ線。トレンドを可視化します。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 350">
+                    <path d="M0,320 C200,300 500,250 800,200" stroke="var(--ma200)" stroke-width="12" fill="none" opacity="0.8" />
+                    <text x="650" y="240" fill="var(--ma200)" font-size="20" font-weight="bold">長期MA</text>
+                    <path d="M0,300 C200,280 450,180 800,120" stroke="var(--ma75)" stroke-width="10" fill="none" opacity="0.9" />
+                    <text x="650" y="160" fill="var(--ma75)" font-size="20" font-weight="bold">中期MA</text>
+                    <path d="M0,280 C200,260 400,180 800,40" stroke="var(--ma20)" stroke-width="8" fill="none" />
+                    <text x="650" y="80" fill="var(--ma20)" font-size="20" font-weight="bold">短期MA</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 03: 磁石 -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-magnet"></i></div><h2><span>講義 03：磁石の法則</span></h2></div>
+            <p>離れすぎると、必ずMAへと引き戻される性質。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 350">
+                    <path d="M0,280 Q400,230 800,120" stroke="var(--ma75)" stroke-width="12" fill="none" />
+                    <polyline points="0,310 80,270 160,290 240,210 320,240 400,120 500,150" stroke="var(--white)" stroke-width="4" fill="none" />
+                    <defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="var(--accent)" /></marker></defs>
+                    <line x1="400" y1="135" x2="400" y2="215" stroke="var(--accent)" stroke-width="5" marker-end="url(#arrowhead)" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 04: 壁 (ご指定のテキスト) -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-shield-halved"></i></div><h2><span>講義 04：壁の法則と抵抗帯</span></h2></div>
+            <p style="font-size:16px; line-height: 1.4;">
+                移動平均線は、サポレジなどと抵抗帯と同じ意味を持ちます。その他のエントリーの根拠は必要ですが、上位足であるほど、上昇トレンド時上向きのMAがあると、エントリーしやすい場面となります。
+            </p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 350">
+                    <path d="M0,280 Q400,260 800,230" stroke="var(--ma75)" stroke-width="14" fill="none" />
+                    <polyline points="50,130 250,268 400,110 550,248 780,80" stroke="var(--white)" stroke-width="5" fill="none" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 05: 収束 -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-compress-arrows-alt"></i></div><h2><span>講義 05：収束（パワー蓄積）</span></h2></div>
+            <p>複数のMAが重なるとき、相場は爆発寸前です。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 350">
+                    <path d="M0,80 C100,50 200,210 350,180 S450,180 550,180" stroke="var(--ma200)" stroke-width="10" fill="none" opacity="0.7" />
+                    <path d="M0,310 C150,330 250,130 400,180 S500,180 550,180" stroke="var(--ma75)" stroke-width="10" fill="none" opacity="0.8" />
+                    <path d="M0,180 Q100,280 200,180 T400,180 L550,180" stroke="var(--ma20)" stroke-width="10" fill="none" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 06: 拡散 -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-wind"></i></div><h2><span>講義 06：拡散（トレンド開始）</span></h2></div>
+            <p>パワーが解放され、MAが広がる「稼ぎ時」です。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 350">
+                    <path d="M0,280 Q300,250 800,130" stroke="var(--ma75)" stroke-width="14" fill="none" />
+                    <path d="M0,230 L150,210 L280,245 L350,225 L400,240 L500,150 800,50" stroke="var(--ma20)" stroke-width="12" fill="none" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 07: 押し目買い -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-arrow-trend-up"></i></div><h2><span>講義 07：勝てる「押し目」の形</span></h2></div>
+            <p>長期MAが上向きで、短期MAとの間に価格が落ちてきた場所。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 500">
+                    <path d="M0,450 Q400,420 800,320" stroke="var(--ma200)" stroke-width="18" fill="none" />
+                    <path d="M0,350 C200,330 400,370 800,150" stroke="var(--ma75)" stroke-width="14" fill="none" />
+                    <polyline points="0,250 150,100 300,220 450,330 650,100 800,20" fill="none" stroke="var(--white)" stroke-width="8" />
+                    <circle cx="450" cy="330" r="60" fill="none" stroke="var(--accent)" stroke-width="10" stroke-dasharray="15">
+                        <animate attributeName="opacity" values="1;0.2;1" dur="1.2s" repeatCount="indefinite" />
+                    </circle>
+                    <text x="470" y="420" fill="var(--accent)" font-size="32" font-weight="bold">★押し目エントリー</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 08: グランビルの法則 総合図解 -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-diagram-project"></i></div><h2><span>講義 08：グランビルの法則 全サイン図解</span></h2></div>
+            <p>8つの売買ポイント。移動平均線の「傾き」と価格の「位置」の相関図。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 1000 600">
+                    <path d="M0,350 C150,450 350,450 500,300 S850,50 1000,150" stroke="var(--ma200)" stroke-width="10" fill="none" opacity="0.7" />
+                    <polyline points="0,320 100,400 200,480 300,420 400,350 500,200 600,100 700,40 800,100 900,250 1000,200" stroke="white" stroke-width="3" fill="none" />
+                    <g fill="var(--buy)" font-weight="bold" font-size="16">
+                        <circle cx="100" cy="400" r="12" /><text x="30" y="430">① 買い(新規)</text>
+                        <circle cx="300" cy="420" r="12" /><text x="250" y="450">② 買い(押し目)</text>
+                        <circle cx="400" cy="350" r="12" /><text x="380" y="385">③ 買い(買い増し)</text>
+                        <circle cx="200" cy="480" r="12" /><text x="120" y="510">④ 買い(自律反発)</text>
+                    </g>
+                    <g fill="var(--sell)" font-weight="bold" font-size="16">
+                        <circle cx="600" cy="100" r="12" /><text x="540" y="80">⑤ 売り(新規)</text>
+                        <circle cx="800" cy="100" r="12" /><text x="760" y="80">⑥ 売り(戻り売り)</text>
+                        <circle cx="900" cy="250" r="12" /><text x="860" y="285">⑦ 売り(売り増し)</text>
+                        <circle cx="700" cy="40" r="12" /><text x="720" y="40">⑧ 売り(自律反落)</text>
+                    </g>
+                    <text x="500" y="565" fill="var(--accent)" font-size="22" text-anchor="middle">MAの向きに対して価格がどこにいるかが重要！</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 09: クロス -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-shuffle"></i></div><h2><span>講義 09：GC・DC（転換の合図）</span></h2></div>
+            <p>短期MAが長期MAを抜くとき、トレンドが入れ替わります。<br>
+            <strong style="color:var(--danger);">※クロスした理由だけで飛び乗りエントリーはNG！根拠が重要です。</strong></p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 500">
+                    <path d="M50,300 L350,200" stroke="var(--ma200)" stroke-width="12" fill="none" />
+                    <path d="M50,400 L350,100" stroke="var(--ma20)" stroke-width="12" fill="none" />
+                    <circle cx="215" cy="245" r="45" fill="none" stroke="var(--buy)" stroke-width="6" />
+                    <text x="60" y="450" fill="var(--buy)" font-size="28" font-weight="bold">ゴールデンクロス</text>
+                    <path d="M450,100 L750,250" stroke="var(--ma200)" stroke-width="12" fill="none" />
+                    <path d="M450,50 L750,350" stroke="var(--ma20)" stroke-width="12" fill="none" />
+                    <circle cx="615" cy="180" r="45" fill="none" stroke="var(--sell)" stroke-width="6" />
+                    <text x="540" y="450" fill="var(--sell)" font-size="28" font-weight="bold">デッドクロス</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10: 買いサイン -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-plus-circle"></i></div><h2><span>講義 10：買いサイン【1】【2】</span></h2></div>
+            <p>①上抜け（新規） / ②割り込んで戻る（押し目）</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 500">
+                    <path d="M50,400 Q200,400 400,280 T750,50" stroke="var(--ma75)" stroke-width="20" fill="none" />
+                    <polyline points="50,480 150,450 250,280 380,350 500,280 650,50" fill="none" stroke="var(--white)" stroke-width="8" />
+                    <circle cx="230" cy="315" r="40" fill="var(--buy)" stroke="var(--white)" stroke-width="4" />
+                    <text x="180" y="240" fill="var(--buy)" font-size="26" font-weight="bold">①上抜け</text>
+                    <circle cx="430" cy="315" r="40" fill="var(--buy)" stroke="var(--white)" stroke-width="4" />
+                    <text x="400" y="420" fill="var(--buy)" font-size="26" font-weight="bold">②押し目</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11: 売りサイン -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-minus-circle"></i></div><h2><span>講義 11：最強の「売り」サイン</span></h2></div>
+            <p>下向きのMAに向かって上昇し、反発した「戻り売り」ポイント。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 500">
+                    <path d="M50,100 Q200,100 400,280 T750,450" stroke="var(--ma75)" stroke-width="20" fill="none" />
+                    <polyline points="50,20 150,50 250,250 380,160 480,250 650,450" fill="none" stroke="var(--white)" stroke-width="8" />
+                    <circle cx="430" cy="200" r="50" fill="var(--sell)" stroke="var(--white)" stroke-width="5" />
+                    <text x="360" y="120" fill="var(--sell)" font-size="32" font-weight="bold">戻り売りポイント</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12: 角度 -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-compass"></i></div><h2><span>講義 12：MA의「角度」こそ命</span></h2></div>
+            <p style="font-size: 16px;">角度がないMAは磁石にも壁にもなりません。<br><strong>横這い（水平）は徹底スルー</strong>が鉄則です。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 500">
+                    <line x1="50" y1="300" x2="300" y2="300" stroke="var(--danger)" stroke-width="12" stroke-dasharray="20" />
+                    <text x="50" y="360" fill="var(--danger)" font-size="28" font-weight="bold">× 横這いは無視</text>
+                    <line x1="450" y1="450" x2="700" y2="50" stroke="var(--accent)" stroke-width="25" />
+                    <text x="450" y="250" fill="var(--accent)" font-size="38" font-weight="bold">◎ 角度＝トレンド</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13: 乖離 -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-ruler-vertical"></i></div><h2><span>講義 13：逆張りの極意「乖離」</span></h2></div>
+            <p>MAから離れすぎた価格は、必ず戻ろうとします。逆張りの合図。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 500">
+                    <path d="M0,80 Q400,140 800,200" stroke="var(--ma200)" stroke-width="22" fill="none" />
+                    <polyline points="0,80 200,300 400,450 600,300 800,200" fill="none" stroke="var(--white)" stroke-width="8" />
+                    <line x1="400" y1="140" x2="400" y2="450" stroke="var(--danger)" stroke-width="10" stroke-dasharray="15" />
+                    <text x="440" y="320" fill="var(--danger)" font-size="44" font-weight="bold">乖離限界！</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 14: レンジとMAのグチャグチャ -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-arrows-left-right"></i></div><h2><span>講義 14：レンジ相場とMAの停滞</span></h2></div>
+            <p>トレンドがない時は、MAが重なりグチャグチャになります。<strong>手出し無用</strong>のエリアです。</p>
+            <div class="chart-area">
+                <svg viewBox="0 0 800 500">
+                    <line x1="0" y1="150" x2="800" y2="150" stroke="#334155" stroke-width="2" stroke-dasharray="10" />
+                    <line x1="0" y1="350" x2="800" y2="350" stroke="#334155" stroke-width="2" stroke-dasharray="10" />
+                    <text x="10" y="140" fill="#64748b" font-size="14">Range High</text>
+                    <text x="10" y="375" fill="#64748b" font-size="14">Range Low</text>
+                    <path d="M0,250 Q50,230 100,250 T200,250 T300,250 T400,250 T500,250 T600,250 T700,250 T800,250" stroke="var(--ma200)" stroke-width="4" fill="none" opacity="0.6" />
+                    <path d="M0,240 Q60,260 120,240 T240,240 T360,240 T480,240 T600,240 T720,240 T800,240" stroke="var(--ma75)" stroke-width="4" fill="none" opacity="0.7" />
+                    <path d="M0,260 Q40,280 80,260 T160,260 T240,260 T320,260 T400,260 T480,260 T560,260 T640,260 T720,260 T800,260" stroke="var(--ma20)" stroke-width="4" fill="none" opacity="0.8" />
+                    <polyline points="0,200 40,300 80,180 120,320 160,210 200,340 240,190 280,310 320,170 360,330 400,200 440,340 480,180 520,320 560,210 600,340 640,190 680,310 720,170 760,330 800,200" fill="none" stroke="var(--white)" stroke-width="3" />
+                    <rect x="250" y="160" width="300" height="180" fill="rgba(255, 77, 77, 0.1)" stroke="var(--danger)" stroke-width="3" stroke-dasharray="10" />
+                    <text x="400" y="260" fill="var(--danger)" font-size="32" font-weight="bold" text-anchor="middle">MAが複雑に絡む ＝ 休息中</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 15: まとめ -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-flag-checkered"></i></div><h2><span>講義 15：まとめ（MAマスターへ）</span></h2></div>
+            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 40px;">
+                <p style="font-size: 24px; color: var(--accent); font-weight: bold; margin-bottom: 20px;">
+                    移動平均線で勢いはわかります。但しMAだけでエントリーするのは危険です。
+                </p>
+                <p style="font-size: 20px; line-height: 1.6; color: var(--white); margin-bottom: 30px;">
+                    今の上位足の環境、レジサポなど、様々な要因が重なってエントリーできます。
+                </p>
+                <div style="border-top: 1px solid rgba(222, 255, 154, 0.3); padding-top: 30px;">
+                    <p style="font-size: 22px; color: var(--accent); font-weight: bold; text-align: center;">
+                        グランビルの法則もMA同士が磁石のようにくっつく現象です。<br>
+                        反復して、盾を手に入れましょう！
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 16: プロスペクト理論 (さらにコンパクトに修正) -->
+    <div class="slide">
+        <div class="slide-content">
+            <div class="header-box"><div class="shield-icon"><i class="fa-solid fa-brain"></i></div><h2><span>講義 16：プロスペクト理論（負ける心理）</span></h2></div>
+            <p style="font-size: 15px;">手法を知っていても勝てないのは、人間が損を嫌う生き物だからです。</p>
+            <div class="chart-area" style="flex-direction: column; align-items: center; justify-content: flex-start; padding: 10px; gap: 8px;">
+                <div style="width: 100%; max-width: 800px; text-align: left; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px;">
+                    <div style="color:var(--accent); font-size: 18px; font-weight: bold;"><i class="fa-solid fa-heart-crack"></i> 損失回避の法則</div>
+                    <div style="font-size: 13px; color: var(--white); margin-top: 2px;">利益はすぐ確保（利小）し、損切りは先延ばし（損大）にする心理。</div>
+                </div>
+                <div style="width: 100%; max-width: 800px; text-align: left; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px;">
+                    <div style="color:var(--accent); font-size: 18px; font-weight: bold;"><i class="fa-solid fa-scale-unbalanced"></i> 期待値の歪み</div>
+                    <div style="font-size: 13px; color: var(--white); margin-top: 2px;">損失の痛みは、利益の喜びの2倍以上大きく感じてしまいます。</div>
+                </div>
+                <div style="background: rgba(222, 255, 154, 0.1); padding: 12px; border-radius: 12px; border: 1px solid var(--accent); width: 100%; max-width: 800px; margin-top: 5px;">
+                    <div style="color:var(--buy); font-size: 18px; font-weight: bold; text-align: center; line-height: 1.3;">
+                        「MAがこうなったら損切る」と決めたら、<br>感情を殺して機械的に執行せよ！
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="page-indicator" id="indicator">1 / 16</div>
+
+<script>
+    let currentSlide = 0;
+    const totalSlides = 16;
+    const slider = document.getElementById('slider');
+    const indicator = document.getElementById('indicator');
+
+    function updateSlider() {
+        slider.style.transform = `translateX(-${currentSlide * 100}vw)`;
+        indicator.innerText = `${currentSlide + 1} / ${totalSlides}`;
+    }
+
+    function moveSlide(direction) {
+        currentSlide += direction;
+        if (currentSlide < 0) currentSlide = 0;
+        if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+        updateSlider();
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') moveSlide(1);
+        if (e.key === 'ArrowLeft') moveSlide(-1);
+    });
+</script>
+
+</body>
+</html>
