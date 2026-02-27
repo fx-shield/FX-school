@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FX Shield｜4種の神器クイズ</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont; background:#f1f5f9; margin:0; padding:16px; }
+    .card { max-width:420px; margin:auto; background:#fff; border-radius:20px; overflow:hidden; box-shadow:0 10px 25px rgba(0,0,0,.1); }
+    .header { background:#0f172a; color:#fff; padding:20px; text-align:center; }
+    .content { padding:16px; }
+    button { width:100%; padding:14px; border-radius:14px; border:none; font-weight:bold; margin-top:8px; cursor:pointer; }
+    .start { background:#2563eb; color:#fff; }
+    .opt { border:2px solid #e5e7eb; padding:12px; border-radius:12px; margin-bottom:8px; background:#fff; }
+    .opt.correct { border-color:#22c55e; background:#dcfce7; }
+    .opt.wrong { border-color:#ef4444; background:#fee2e2; }
+    .explain { background:#0f172a; color:#fff; padding:12px; border-radius:12px; margin-top:12px; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <h2>FX SHIELD</h2>
+    <p>4種の神器 クイズ</p>
+  </div>
+  <div class="content" id="app"></div>
+</div>
+
+<script>
+const questions = [
+  { q:"上昇トレンドの定義は？", options:["高値だけ更新","安値だけ更新","高値と安値が切り上げ","MAの上"], correct:2, exp:"高値と安値の両方が切り上がるのが上昇トレンド。" },
+  { q:"水平線を抜けて支えになる現象は？", options:["デッドクロス","ロールリバーサル","三尊","PO"], correct:1, exp:"レジサポ転換＝ロールリバーサル。" },
+  { q:"MAが短期→長期で並ぶ状態は？", options:["GC","レンジ","パーフェクトオーダー","三尊"], correct:2, exp:"順番に並んで同じ向き＝強トレンド。" },
+  { q:"上位足が下の時は？", options:["戻り売り","押し目買い","どっちでも","やらない"], correct:0, exp:"上位足の方向に従うのが鉄則。" },
+  { q:"上昇トレンド終了の合図は？", options:["連続陽線","高値未更新","押し安値割れ","MAタッチ"], correct:2, exp:"押し安値を割ると転換サイン。" },
+  { q:"強い水平線は？", options:["1回反発","何度も反発","未到達","今日引いた"], correct:1, exp:"何度も止められている線が最強。" },
+  { q:"短期MAが上抜けは？", options:["デッドクロス","ゴールデンクロス","レンジ","アイランド"], correct:1, exp:"下から上＝ゴールデンクロス。" },
+  { q:"MTF逆行時は？", options:["買う","売る","待つ","両建て"], correct:2, exp:"方向不一致は様子見。" },
+  { q:"高値切り下げは？", options:["爆上げ","加速","勢い減少","確定下降"], correct:2, exp:"勢いが弱まってきてる合図。" },
+  { q:"勝率MAX条件は？", options:["水平線だけ","RSI","4種の神器全部一致","勘"], correct:2, exp:"全部重なった所が最強。" }
+];
+
+let i=0, score=0, locked=false;
+
+function render(){
+  const q = questions[i];
+  document.getElementById("app").innerHTML = `
+    <p><b>Q${i+1}/10</b></p>
+    <h3>${q.q}</h3>
+    ${q.options.map((o,idx)=>`<div class="opt" onclick="answer(${idx})">${o}</div>`).join("")}
+    <div id="exp"></div>
+  `;
+  locked=false;
+}
+
+function answer(idx){
+  if(locked) return;
+  locked=true;
+  const q = questions[i];
+  document.querySelectorAll(".opt").forEach((el,n)=>{
+    if(n===q.correct) el.classList.add("correct");
+    if(n===idx && idx!==q.correct) el.classList.add("wrong");
+  });
+  if(idx===q.correct) score++;
+  document.getElementById("exp").innerHTML = `
+    <div class="explain">
+      ${q.exp}<br><br>
+      <button onclick="next()">次へ</button>
+    </div>
+  `;
+}
+
+function next(){
+  if(i<questions.length-1){
+    i++; render();
+  } else {
+    document.getElementById("app").innerHTML = `
+      <h2>結果</h2>
+      <h1>${score}/10 正解</h1>
+      <button class="start" onclick="restart()">もう一回</button>
+    `;
+  }
+}
+
+function restart(){ i=0; score=0; render(); }
+
+render();
+</script>
+
+</body>
+</html>
